@@ -8,11 +8,11 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 
 ## フェーズ1: プロジェクト初期化
 
-- [ ] **1.1** Next.jsプロジェクトの作成
+- [x] **1.1** Next.jsプロジェクトの作成
   - App Router、TypeScript、ESLint有効
   - `npx create-next-app@latest . --typescript --eslint --app --src-dir --tailwind --import-alias "@/*"`
 
-- [ ] **1.2** 必要なパッケージのインストール
+- [x] **1.2** 必要なパッケージのインストール
   ```bash
   # Hono
   npm install hono
@@ -21,18 +21,21 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
   npm install prisma @prisma/client
 
   # Mastra
-  npm install @mastra/core @mastra/ai-sdk
+  npm install @mastra/core@beta @mastra/ai-sdk@beta
 
   # AI SDK (Vercel)
-  npm install ai
+  npm install ai @ai-sdk/react @ai-sdk/google
 
   # UI関連
   npm install clsx tailwind-merge
+
+  # Zod (Mastra依存)
+  npm install zod@^4
   ```
 
-- [ ] **1.3** 開発用パッケージのインストール
+- [x] **1.3** 開発用パッケージのインストール
   ```bash
-  npm install -D @types/node
+  npm install -D @types/node  # create-next-appで自動インストール済み
   ```
 
 ---
