@@ -143,11 +143,17 @@ ai-chat/
 
 ```env
 # Gemini API
-GEMINI_API_KEY=your_api_key
+GOOGLE_GENERATIVE_AI_API_KEY=your_api_key
 
 # Database (必要に応じて)
 DATABASE_URL=your_database_url
 ```
+
+### セキュリティ
+
+- `.claudeignore`で機密ファイルをClaude Codeの読み取り対象から除外
+- 対象ファイル: `.env`, `.env.local`, `.env.*.local`, `*.pem`, `*.key`
+- APIキーなどの機密情報は`.env.local`に記載し、Gitにコミットしない
 
 ### Git運用
 

@@ -1,0 +1,11 @@
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Other sensitive files
+*.pem
+*.key
+credentials.json

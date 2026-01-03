@@ -42,17 +42,17 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 
 ## フェーズ2: 基本設定
 
-- [ ] **2.1** 環境変数ファイルの作成
+- [x] **2.1** 環境変数ファイルの作成
   - `.env.local` - ローカル開発用
   - `.env.example` - サンプル（Git管理用）
   - 必要な変数: `GOOGLE_GENERATIVE_AI_API_KEY`
 
-- [ ] **2.2** Prismaの初期化
+- [x] **2.2** Prismaの初期化
   ```bash
-  npx prisma init
+  npx prisma init --datasource-provider sqlite
   ```
 
-- [ ] **2.3** `.gitignore`の確認・更新
+- [x] **2.3** `.gitignore`の確認・更新
   - `.env.local`が除外されていることを確認
 
 ---
