@@ -61,28 +61,28 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 
 ### 3.1 Prisma設定
 
-- [ ] **3.1.1** `prisma/schema.prisma`の作成
+- [x] **3.1.1** `prisma/schema.prisma`の作成
   - 今回はセッション中のみなのでDB不要だが、将来拡張用に設定のみ
 
 ### 3.2 Mastra設定
 
-- [ ] **3.2.1** Mastraインスタンスの作成 (`src/lib/mastra/index.ts`)
+- [x] **3.2.1** Mastraインスタンスの作成 (`src/lib/mastra/index.ts`)
   - Mastraの初期化
 
-- [ ] **3.2.2** キャラクターエージェントの作成 (`src/lib/mastra/agents/character-agent.ts`)
+- [x] **3.2.2** キャラクターエージェントの作成 (`src/lib/mastra/agents/character-agent.ts`)
   - Geminiモデルの設定 (`google/gemini-2.0-flash`)
   - 動的なシステムプロンプト（キャラクター設定を反映）
   - 最大トークン: 500
 
 ### 3.3 Hono APIルート
 
-- [ ] **3.3.1** Honoアプリの設定 (`src/lib/hono/app.ts`)
+- [x] **3.3.1** Honoアプリの設定 (`src/lib/hono/app.ts`)
   - ベースパス: `/api`
 
-- [ ] **3.3.2** APIルートの作成 (`src/app/api/[[...route]]/route.ts`)
+- [x] **3.3.2** APIルートの作成 (`src/app/api/[[...route]]/route.ts`)
   - Honoハンドラーのエクスポート
 
-- [ ] **3.3.3** チャットエンドポイントの実装
+- [x] **3.3.3** チャットエンドポイントの実装
   - `POST /api/chat` - ストリーミングチャット
   - リクエスト: `{ messages, character: { name, personality } }`
   - レスポンス: ストリーミング
