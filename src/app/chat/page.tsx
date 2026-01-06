@@ -4,6 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
+import { ChatHeader } from "@/components/chat/ChatHeader";
+import { MessageBubble, TypingIndicator } from "@/components/chat/MessageBubble";
+import { ChatInput, LimitReached } from "@/components/chat/ChatInput";
 
 interface Character {
   name: string;
@@ -79,27 +82,12 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white/80 backdrop-blur-sm border-b border-[var(--card-border)] px-4 py-3 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center text-white font-bold">
-              {character.name.charAt(0)}
-            </div>
-            <div>
-              <h1 className="font-semibold text-gray-800">{character.name}</h1>
-              <p className="text-xs text-gray-500">
-                {turnCount}/{MAX_TURNS} 往復
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={handleNewChat}
-            className="text-sm text-[var(--primary)] hover:text-[var(--primary-dark)] font-medium"
-          >
-            新しいキャラクター
-          </button>
-        </div>
-      </header>
+      <ChatHeader
+        characterName={character.name}
+        turnCount={turnCount}
+        maxTurns={MAX_TURNS}
+        onNewChat={handleNewChat}
+      />
 
       <main className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-2xl mx-auto space-y-4">
@@ -113,47 +101,15 @@ export default function ChatPage() {
           )}
 
           {messages.map((message) => (
-            <div
+            <MessageBubble
               key={message.id}
-              className={`flex animate-fade-in ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[80%] px-4 py-3 ${
-                  message.role === "user" ? "message-user" : "message-assistant"
-                }`}
-              >
-                {message.role === "assistant" && (
-                  <p className="text-xs font-medium text-[var(--primary)] mb-1">
-                    {character.name}
-                  </p>
-                )}
-                <div className="whitespace-pre-wrap">
-                  {message.parts.map((part, i) => {
-                    if (part.type === "text") {
-                      return <span key={`${message.id}-${i}`}>{part.text}</span>;
-                    }
-                    return null;
-                  })}
-                </div>
-              </div>
-            </div>
+              message={message}
+              characterName={character.name}
+            />
           ))}
 
           {isLoading && messages.at(-1)?.role !== "assistant" && (
-            <div className="flex justify-start animate-fade-in">
-              <div className="message-assistant px-4 py-3">
-                <p className="text-xs font-medium text-[var(--primary)] mb-1">
-                  {character.name}
-                </p>
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
+            <TypingIndicator characterName={character.name} />
           )}
 
           <div ref={messagesEndRef} />
@@ -163,32 +119,14 @@ export default function ChatPage() {
       <footer className="bg-white/80 backdrop-blur-sm border-t border-[var(--card-border)] px-4 py-4 sticky bottom-0">
         <div className="max-w-2xl mx-auto">
           {isLimitReached ? (
-            <div className="text-center">
-              <p className="text-gray-600 mb-3">
-                会話の制限（{MAX_TURNS}往復）に達しました
-              </p>
-              <button onClick={handleNewChat} className="btn-primary">
-                新しい会話を始める
-              </button>
-            </div>
+            <LimitReached maxTurns={MAX_TURNS} onNewChat={handleNewChat} />
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-3">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="メッセージを入力..."
-                className="input-field flex-1"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="btn-primary px-6"
-              >
-                送信
-              </button>
-            </form>
+            <ChatInput
+              value={input}
+              onChange={setInput}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+            />
           )}
         </div>
       </footer>

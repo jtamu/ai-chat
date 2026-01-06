@@ -135,16 +135,16 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 
 ## フェーズ5: UIコンポーネント
 
-- [ ] **5.1** 共通コンポーネントの作成
+- [x] **5.1** 共通コンポーネントの作成
   - `src/components/ui/Button.tsx` - ボタン
   - `src/components/ui/Input.tsx` - 入力フィールド
   - `src/components/ui/Card.tsx` - カード
 
-- [ ] **5.2** キャラクター関連コンポーネント
+- [x] **5.2** キャラクター関連コンポーネント
   - `src/components/character/TemplateCard.tsx` - テンプレート選択カード
   - `src/components/character/CharacterForm.tsx` - 作成フォーム
 
-- [ ] **5.3** チャット関連コンポーネント
+- [x] **5.3** チャット関連コンポーネント
   - `src/components/chat/MessageBubble.tsx` - メッセージ吹き出し
   - `src/components/chat/ChatInput.tsx` - 入力欄
   - `src/components/chat/ChatHeader.tsx` - ヘッダー（キャラ名表示）
