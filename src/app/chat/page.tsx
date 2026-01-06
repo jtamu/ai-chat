@@ -7,6 +7,7 @@ import { TextStreamChatTransport } from "ai";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { MessageBubble, TypingIndicator } from "@/components/chat/MessageBubble";
 import { ChatInput, LimitReached } from "@/components/chat/ChatInput";
+import { ErrorMessage } from "@/components/chat/ErrorMessage";
 
 interface Character {
   name: string;
@@ -22,7 +23,7 @@ export default function ChatPage() {
   const [turnCount, setTurnCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, status, sendMessage } = useChat({
+  const { messages, status, error, sendMessage } = useChat({
     transport: new TextStreamChatTransport({
       api: "/api/chat",
       body: character ? { character } : undefined,
@@ -111,6 +112,8 @@ export default function ChatPage() {
           {isLoading && messages.at(-1)?.role !== "assistant" && (
             <TypingIndicator characterName={character.name} />
           )}
+
+          {error && <ErrorMessage error={error} />}
 
           <div ref={messagesEndRef} />
         </div>

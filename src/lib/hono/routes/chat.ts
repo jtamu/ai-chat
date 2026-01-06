@@ -22,17 +22,33 @@ const google = createGoogleGenerativeAI();
 export const chatRoute = new Hono();
 
 chatRoute.post("/", async (c) => {
-  const body = await c.req.json<ChatRequest>();
-  const { messages, character } = body;
+  try {
+    const body = await c.req.json<ChatRequest>();
+    const { messages, character } = body;
 
-  const systemPrompt = createCharacterInstructions(character);
+    if (!character?.name || !character?.personality) {
+      return c.json({ error: "キャラクター情報が不正です" }, 400);
+    }
 
-  const result = streamText({
-    model: google("gemini-2.0-flash"),
-    system: systemPrompt,
-    messages,
-    maxOutputTokens: 500,
-  });
+    if (!messages || !Array.isArray(messages)) {
+      return c.json({ error: "メッセージが不正です" }, 400);
+    }
 
-  return result.toTextStreamResponse();
+    const systemPrompt = createCharacterInstructions(character);
+
+    const result = streamText({
+      model: google("gemini-2.0-flash"),
+      system: systemPrompt,
+      messages,
+      maxOutputTokens: 500,
+    });
+
+    return result.toTextStreamResponse();
+  } catch (error) {
+    console.error("Chat API error:", error);
+    return c.json(
+      { error: "メッセージの処理中にエラーが発生しました" },
+      500
+    );
+  }
 });
