@@ -190,15 +190,15 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 
 ## フェーズ8: デプロイ準備
 
-- [ ] **8.1** 本番用環境変数の準備
+- [x] **8.1** 本番用環境変数の準備
   - `GOOGLE_GENERATIVE_AI_API_KEY`
 
-- [ ] **8.2** ビルド確認
+- [x] **8.2** ビルド確認
   ```bash
   npm run build
   ```
 
-- [ ] **8.3** Dockerfileの作成
+- [x] **8.3** Dockerfileの作成
   ```dockerfile
   FROM node:20-alpine AS base
 
@@ -229,7 +229,7 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
   CMD ["node", "server.js"]
   ```
 
-- [ ] **8.4** next.config.jsにstandalone出力設定
+- [x] **8.4** next.config.jsにstandalone出力設定
   ```javascript
   const nextConfig = {
     output: 'standalone',
