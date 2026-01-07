@@ -182,3 +182,7 @@ gcloud run deploy ai-chat \
   --allow-unauthenticated \
   --set-env-vars "GOOGLE_GENERATIVE_AI_API_KEY=your_api_key"
 ```
+
+### URL
+
+https://ai-chat-654264548176.asia-northeast1.run.app/
