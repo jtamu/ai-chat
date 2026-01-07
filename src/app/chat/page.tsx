@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
-import { TextStreamChatTransport } from "ai";
+import { DefaultChatTransport } from "ai";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { MessageBubble, TypingIndicator } from "@/components/chat/MessageBubble";
 import { ChatInput, LimitReached } from "@/components/chat/ChatInput";
@@ -24,9 +24,8 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, status, error, sendMessage } = useChat({
-    transport: new TextStreamChatTransport({
+    transport: new DefaultChatTransport({
       api: "/api/chat",
-      body: character ? { character } : undefined,
     }),
   });
 
@@ -54,10 +53,16 @@ export default function ChatPage() {
       !input.trim() ||
       status === "streaming" ||
       status === "submitted" ||
-      turnCount >= MAX_TURNS
+      turnCount >= MAX_TURNS ||
+      !character
     )
       return;
-    sendMessage({ text: input });
+    sendMessage(
+      { text: input },
+      {
+        body: { character },
+      }
+    );
     setInput("");
   };
 

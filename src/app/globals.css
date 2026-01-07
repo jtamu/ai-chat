@@ -76,8 +76,14 @@ body {
   background: var(--card-bg);
   border: 2px solid var(--card-border);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
   transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 1.5rem;
+  }
 }
 
 .card:hover {

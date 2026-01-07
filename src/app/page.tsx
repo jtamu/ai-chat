@@ -53,7 +53,7 @@ export default function Home() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-10">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent mb-3">
             AI キャラクターチャット
           </h1>
           <p className="text-lg text-gray-600">

@@ -30,7 +30,8 @@ export function ChatHeader({
           </div>
         </div>
         <Button variant="ghost" size="sm" onClick={onNewChat}>
-          新しいキャラクター
+          <span className="hidden sm:inline">新しいキャラクター</span>
+          <span className="sm:hidden">戻る</span>
         </Button>
       </div>
     </header>

@@ -7,13 +7,19 @@ import {
   type CharacterConfig,
 } from "../../mastra/agents/character-agent";
 
-interface ChatMessage {
+interface MessagePart {
+  type: string;
+  text?: string;
+}
+
+interface UIMessage {
   role: "user" | "assistant" | "system";
-  content: string;
+  content?: string;
+  parts?: MessagePart[];
 }
 
 interface ChatRequest {
-  messages: ChatMessage[];
+  messages: UIMessage[];
   character: CharacterConfig;
 }
 
@@ -34,16 +40,31 @@ chatRoute.post("/", async (c) => {
       return c.json({ error: "メッセージが不正です" }, 400);
     }
 
+    // UIMessage形式からModelMessage形式に変換
+    const convertedMessages = messages.map((msg) => {
+      let content = msg.content;
+      if (!content && msg.parts) {
+        content = msg.parts
+          .filter((part) => part.type === "text" && part.text)
+          .map((part) => part.text)
+          .join("");
+      }
+      return {
+        role: msg.role,
+        content: content || "",
+      };
+    });
+
     const systemPrompt = createCharacterInstructions(character);
 
     const result = streamText({
       model: google("gemini-2.0-flash"),
       system: systemPrompt,
-      messages,
+      messages: convertedMessages,
       maxOutputTokens: 500,
     });
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);
     return c.json(
