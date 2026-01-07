@@ -29,8 +29,8 @@
 
 | 項目 | 内容 |
 |------|------|
-| ホスティング | AWS EC2 |
-| インスタンス | t2.micro または t3.micro（最小構成） |
+| ホスティング | Google Cloud Run |
+| コンテナ | Docker |
 
 ## 機能仕様
 
@@ -163,15 +163,22 @@ DATABASE_URL=your_database_url
 
 ## デプロイ
 
-### AWS EC2設定
+### Google Cloud Run設定
 
-- インスタンスタイプ: t2.micro または t3.micro
-- Node.js環境をセットアップ
-- PM2などでプロセス管理推奨
+- Dockerコンテナでデプロイ
+- 環境変数はCloud Runのシークレットまたは環境変数で設定
+- 自動スケーリング対応
 
-### ビルド・起動
+### ビルド・デプロイ
 
 ```bash
+# ローカルビルド確認
 npm run build
-npm run start
+
+# Cloud Runへデプロイ（gcloud CLI使用）
+gcloud run deploy ai-chat \
+  --source . \
+  --region asia-northeast1 \
+  --allow-unauthenticated \
+  --set-env-vars "GOOGLE_GENERATIVE_AI_API_KEY=your_api_key"
 ```

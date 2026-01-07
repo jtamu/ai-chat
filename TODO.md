@@ -198,61 +198,82 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
   npm run build
   ```
 
-- [ ] **8.3** PM2設定ファイルの作成 (`ecosystem.config.js`)
+- [ ] **8.3** Dockerfileの作成
+  ```dockerfile
+  FROM node:20-alpine AS base
+
+  # 依存関係インストール
+  FROM base AS deps
+  WORKDIR /app
+  COPY package*.json ./
+  RUN npm ci
+
+  # ビルド
+  FROM base AS builder
+  WORKDIR /app
+  COPY --from=deps /app/node_modules ./node_modules
+  COPY . .
+  RUN npm run build
+
+  # 本番イメージ
+  FROM base AS runner
+  WORKDIR /app
+  ENV NODE_ENV=production
+  ENV PORT=8080
+
+  COPY --from=builder /app/public ./public
+  COPY --from=builder /app/.next/standalone ./
+  COPY --from=builder /app/.next/static ./.next/static
+
+  EXPOSE 8080
+  CMD ["node", "server.js"]
+  ```
+
+- [ ] **8.4** next.config.jsにstandalone出力設定
   ```javascript
-  module.exports = {
-    apps: [{
-      name: 'ai-chat',
-      script: 'npm',
-      args: 'start',
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3000
-      }
-    }]
+  const nextConfig = {
+    output: 'standalone',
   }
   ```
 
 ---
 
-## フェーズ9: AWS EC2デプロイ
+## フェーズ9: Google Cloud Runデプロイ
 
-- [ ] **9.1** EC2インスタンスの準備
-  - t2.micro または t3.micro
-  - Amazon Linux 2 または Ubuntu
-  - セキュリティグループ: ポート22, 80, 443, 3000
+- [ ] **9.1** Google Cloudプロジェクトの準備
+  - GCPプロジェクト作成（または既存プロジェクト使用）
+  - Cloud Run APIの有効化
+  - gcloud CLIのインストール・認証
 
-- [ ] **9.2** サーバー環境構築
+- [ ] **9.2** gcloud CLIの設定
   ```bash
-  # Node.jsインストール
-  curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
-  sudo yum install -y nodejs
+  # ログイン
+  gcloud auth login
 
-  # PM2インストール
-  sudo npm install -g pm2
+  # プロジェクト設定
+  gcloud config set project <PROJECT_ID>
+
+  # リージョン設定
+  gcloud config set run/region asia-northeast1
   ```
 
-- [ ] **9.3** アプリケーションデプロイ
+- [ ] **9.3** Cloud Runへデプロイ
   ```bash
-  # リポジトリクローン
-  git clone <repository-url>
-  cd ai-chat
-
-  # 依存関係インストール
-  npm install
-
-  # ビルド
-  npm run build
-
-  # PM2で起動
-  pm2 start ecosystem.config.js
-  pm2 save
-  pm2 startup
+  # ソースからデプロイ（Dockerfileを使用）
+  gcloud run deploy ai-chat \
+    --source . \
+    --region asia-northeast1 \
+    --allow-unauthenticated \
+    --set-env-vars "GOOGLE_GENERATIVE_AI_API_KEY=your_api_key" \
+    --memory 512Mi \
+    --cpu 1 \
+    --min-instances 0 \
+    --max-instances 10
   ```
 
-- [ ] **9.4** Nginx設定（オプション）
-  - リバースプロキシ設定
-  - SSL証明書（Let's Encrypt）
+- [ ] **9.4** カスタムドメイン設定（オプション）
+  - Cloud Runのドメインマッピング
+  - DNS設定
 
 ---
 
@@ -264,7 +285,7 @@ AIチャットボットアプリケーションの構築手順。各フェーズ
 - [ ] 会話画面でストリーミングチャットができる
 - [ ] 20往復で制限がかかる
 - [ ] ポップなUIデザインになっている
-- [ ] EC2にデプロイされている
+- [ ] Cloud Runにデプロイされている
 - [ ] 本番環境で動作確認済み
 
 ---
