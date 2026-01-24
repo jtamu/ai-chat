@@ -10,6 +10,7 @@ import {
 interface MessagePart {
   type: string;
   text?: string;
+  image?: string;
 }
 
 interface UIMessage {
@@ -21,6 +22,8 @@ interface UIMessage {
 interface ChatRequest {
   messages: UIMessage[];
   character: CharacterConfig;
+  imageData?: string;
+  imageMimeType?: string;
 }
 
 const google = createGoogleGenerativeAI();
@@ -30,7 +33,7 @@ export const chatRoute = new Hono();
 chatRoute.post("/", async (c) => {
   try {
     const body = await c.req.json<ChatRequest>();
-    const { messages, character } = body;
+    const { messages, character, imageData, imageMimeType } = body;
 
     if (!character?.name || !character?.personality) {
       return c.json({ error: "キャラクター情報が不正です" }, 400);
@@ -41,7 +44,7 @@ chatRoute.post("/", async (c) => {
     }
 
     // UIMessage形式からModelMessage形式に変換
-    const convertedMessages = messages.map((msg) => {
+    const convertedMessages = messages.map((msg, index) => {
       let content = msg.content;
       if (!content && msg.parts) {
         content = msg.parts
@@ -49,6 +52,28 @@ chatRoute.post("/", async (c) => {
           .map((part) => part.text)
           .join("");
       }
+
+      // 最後のユーザーメッセージに画像を追加
+      const isLastUserMessage =
+        index === messages.length - 1 &&
+        msg.role === "user" &&
+        imageData &&
+        imageMimeType;
+
+      if (isLastUserMessage) {
+        return {
+          role: msg.role,
+          content: [
+            { type: "text", text: content || "" },
+            {
+              type: "image",
+              image: imageData,
+              mimeType: imageMimeType,
+            },
+          ],
+        };
+      }
+
       return {
         role: msg.role,
         content: content || "",

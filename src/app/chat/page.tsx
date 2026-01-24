@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [input, setInput] = useState("");
   const [turnCount, setTurnCount] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, status, error, sendMessage } = useChat({
@@ -47,23 +48,46 @@ export default function ChatPage() {
     setTurnCount(userMessages.length);
   }, [messages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
-      !input.trim() ||
+      (!input.trim() && !selectedImage) ||
       status === "streaming" ||
       status === "submitted" ||
       turnCount >= MAX_TURNS ||
       !character
     )
       return;
+
+    let imageData: string | undefined;
+    if (selectedImage) {
+      imageData = await fileToBase64(selectedImage);
+    }
+
     sendMessage(
-      { text: input },
+      { text: input || "画像を送信しました" },
       {
-        body: { character },
+        body: {
+          character,
+          imageData,
+          imageMimeType: selectedImage?.type,
+        },
       }
     );
     setInput("");
+    setSelectedImage(null);
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleNewChat = () => {
@@ -134,6 +158,8 @@ export default function ChatPage() {
               onChange={setInput}
               onSubmit={handleSubmit}
               isLoading={isLoading}
+              onImageSelect={setSelectedImage}
+              selectedImage={selectedImage}
             />
           )}
         </div>
