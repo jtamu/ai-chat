@@ -34,6 +34,20 @@ export function MessageBubble({ message, characterName }: MessageBubbleProps) {
             if (part.type === "text") {
               return <span key={`${message.id}-${i}`}>{part.text}</span>;
             }
+            if (part.type === "image" && part.image) {
+              const imageUrl =
+                typeof part.image === "string" && part.image.startsWith("data:")
+                  ? part.image
+                  : `data:image/jpeg;base64,${part.image}`;
+              return (
+                <img
+                  key={`${message.id}-${i}`}
+                  src={imageUrl}
+                  alt="添付画像"
+                  className="max-w-full rounded-lg mt-2 border border-[var(--card-border)]"
+                />
+              );
+            }
             return null;
           })}
         </div>
